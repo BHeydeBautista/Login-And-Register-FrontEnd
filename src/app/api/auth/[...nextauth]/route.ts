@@ -18,7 +18,9 @@ const authOptions = {
           },
         });
         if (!UserFound) {
-          return null;
+          throw new Error(JSON.stringify({
+            message: " User not found"
+          }))
         }
 
         const matchPassword = bcrypt.compare(
@@ -27,7 +29,7 @@ const authOptions = {
         );
 
         if(!matchPassword){
-            return null;
+            throw new Error('Wrong password')
         }
 
         return {
