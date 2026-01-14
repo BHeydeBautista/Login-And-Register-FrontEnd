@@ -11,16 +11,22 @@ const authOptions = {
         email: { label: "Email", type: "text", placeholder: "jsmith" },
         password: { label: "Password", type: "password" },
       },
-      async authorize(credentials, req) {
+      async authorize(credentials) {
         const UserFound = await prisma.user.findUnique({
           where: {
             email: credentials?.email,
           },
         });
         if (!UserFound) {
-          throw new Error(JSON.stringify({
-            message: " User not found"
-          }))
+          throw new Error(
+            JSON.stringify({
+              message: " User not found",
+            })
+          );
+        }
+
+        if (!credentials?.email || !credentials?.password) {
+          throw new Error("Missing credentials");
         }
 
         const matchPassword = bcrypt.compare(
@@ -28,15 +34,15 @@ const authOptions = {
           UserFound.password
         );
 
-        if(!matchPassword){
-            throw new Error('Wrong password')
+        if (!matchPassword) {
+          throw new Error("Wrong password");
         }
 
         return {
-            id: UserFound.id,
-            name: UserFound.name,
-            email: UserFound.email,
-        }
+          id: UserFound.id,
+          name: UserFound.name,
+          email: UserFound.email,
+        };
       },
     }),
   ],
