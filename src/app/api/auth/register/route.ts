@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
+import bcrypt from "bcryptjs";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function POST(request: any) {
@@ -41,13 +42,16 @@ export async function POST(request: any) {
     );
   }
 
+  const hashPassword = await bcrypt.hash(data.password, 10)
   const newUser = await prisma.user.create({
     data: {
-      email,
-      name: username,
-      password,
+      email: data.email,
+      name: data.username,
+      password: hashPassword,
     },
   });
 
-  return NextResponse.json("registering...");
+  const { password: _, ...user } = newUser
+
+  return NextResponse.json(user);
 }
