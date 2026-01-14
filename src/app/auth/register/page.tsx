@@ -2,6 +2,7 @@
 
 import React from "react";
 import { useForm } from "react-hook-form";
+import { useRouter } from "next/navigation";
 
 function Registerpage() {
   const {
@@ -9,6 +10,7 @@ function Registerpage() {
     handleSubmit,
     formState: { errors },
   } = useForm();
+  const router = useRouter();
 
   const onSubmit = handleSubmit(async (data) => {
     console.log(data);
@@ -26,8 +28,13 @@ function Registerpage() {
         "content-Type": "application/json",
       },
     });
-    const resJSON = await res.json();
-    console.log(resJSON);
+
+    if (res.ok) {
+      router.push('/auth/login')
+    }
+     
+
+
   });
 
   return (
