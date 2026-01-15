@@ -2,8 +2,9 @@ import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import prisma from "@/lib/prisma";
 import bcrypt from "bcryptjs";
+import { signIn } from "next-auth/react";
 
-const authOptions = {
+export const authOptions = {
   providers: [
     CredentialsProvider({
       name: "Credentials",
@@ -46,6 +47,9 @@ const authOptions = {
       },
     }),
   ],
+  pages: {
+    signIn: "/auth/login",
+  }
 };
 
 const handler = NextAuth(authOptions);
