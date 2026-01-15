@@ -2,67 +2,46 @@ import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export async function POST(request: any) {
+export async function POST(request: Request) {
   try {
-    const data = await request.json();
-    console.log(data);
+    const { name, email, password } = await request.json();
 
-    const { email, username, password } = data;
+    if (!email || !password) {
+      return NextResponse.json(
+        { message: "Missing required fields" },
+        { status: 400 }
+      );
+    }
 
     const userFound = await prisma.user.findUnique({
-      where: {
-        email: data.email,
-      },
-    });
-    const usernameFound = await prisma.user.findUnique({
-      where: {
-        email: data.username,
-      },
+      where: { email },
     });
 
     if (userFound) {
       return NextResponse.json(
-        {
-          message: "Email already exists",
-        },
-        {
-          status: 400,
-        }
+        { message: "Email already exists" },
+        { status: 400 }
       );
     }
 
-    if (usernameFound) {
-      return NextResponse.json(
-        {
-          message: "User already exists",
-        },
-        {
-          status: 400,
-        }
-      );
-    }
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-    const hashPassword = await bcrypt.hash(data.password, 10);
     const newUser = await prisma.user.create({
       data: {
-        email: data.email,
-        name: data.username,
-        password: hashPassword,
+        name,
+        email,
+        password: hashedPassword,
       },
     });
 
     const { password: _, ...user } = newUser;
 
-    return NextResponse.json(user);
+    return NextResponse.json(user, { status: 201 });
   } catch (error) {
+    console.error(error);
     return NextResponse.json(
-      {
-        message: error,
-      },
-      {
-        status: 500,
-      }
+      { message: "Internal server error" },
+      { status: 500 }
     );
   }
 }
