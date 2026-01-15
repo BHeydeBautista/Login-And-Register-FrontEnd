@@ -3,6 +3,20 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { motion } from "framer-motion";
+
+const fadeUp = {
+  hidden: { opacity: 0, y: 16 },
+  visible: { opacity: 1, y: 0 },
+};
+
+const stagger = {
+  visible: {
+    transition: {
+      staggerChildren: 0.08,
+    },
+  },
+};
 
 const ShieldIcon: React.FC = () => (
   <svg
@@ -13,10 +27,11 @@ const ShieldIcon: React.FC = () => (
     fill="none"
     stroke="currentColor"
     strokeWidth="2"
+    className="text-teal-400"
     strokeLinecap="round"
     strokeLinejoin="round"
   >
-    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
   </svg>
 );
 
@@ -29,11 +44,12 @@ const AtSignIcon: React.FC = () => (
     fill="none"
     stroke="currentColor"
     strokeWidth="2"
+    className="text-slate-400"
     strokeLinecap="round"
     strokeLinejoin="round"
   >
-    <circle cx="12" cy="12" r="4"></circle>
-    <path d="M16 8v5a3 3 0 0 0 6 0v-1a10 10 0 1 0-3.92 7.94"></path>
+    <circle cx="12" cy="12" r="4" />
+    <path d="M16 8v5a3 3 0 0 0 6 0v-1a10 10 0 1 0-3.92 7.94" />
   </svg>
 );
 
@@ -57,12 +73,13 @@ const LockIcon: React.FC = () => (
     fill="none"
     stroke="currentColor"
     strokeWidth="2"
+    className="text-slate-400"
     strokeLinecap="round"
     strokeLinejoin="round"
   >
-    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-    <circle cx="12" cy="16" r="1"></circle>
-    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+    <rect x="3" y="11" width="18" height="11" rx="2" />
+    <circle cx="12" cy="16" r="1" />
+    <path d="M7 11V7a5 5 0 0 1 10 0v4" />
   </svg>
 );
 
@@ -75,11 +92,12 @@ const EyeIcon: React.FC = () => (
     fill="none"
     stroke="currentColor"
     strokeWidth="2"
+    className="text-slate-500 hover:text-teal-400 transition"
     strokeLinecap="round"
     strokeLinejoin="round"
   >
-    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-    <circle cx="12" cy="12" r="3"></circle>
+    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+    <circle cx="12" cy="12" r="3" />
   </svg>
 );
 
@@ -92,11 +110,12 @@ const EyeOffIcon: React.FC = () => (
     fill="none"
     stroke="currentColor"
     strokeWidth="2"
+    className="text-slate-500 hover:text-teal-400 transition"
     strokeLinecap="round"
     strokeLinejoin="round"
   >
-    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
-    <line x1="1" y1="1" x2="23" y2="23"></line>
+    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" />
+    <line x1="1" y1="1" x2="23" y2="23" />
   </svg>
 );
 
@@ -138,6 +157,23 @@ const TwitterIcon: React.FC = () => (
   </svg>
 );
 
+const styles = `
+@keyframes loginIn {
+  0% {
+    opacity: 0;
+    transform: translateY(30px) scale(0.96);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.animate-login-in {
+  animation: loginIn 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+`;
+
 // Main Component
 type LoginFormInputs = {
   email: string;
@@ -178,165 +214,181 @@ const Login4: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white dark:bg-black flex">
-      {/* Left side - Image/Branding */}
-      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 dark:from-indigo-500 dark:via-purple-500 dark:to-pink-500 relative overflow-hidden">
-        <div className="absolute inset-0 bg-black/20"></div>
-        <div className="relative z-10 flex flex-col justify-center items-center text-white p-12">
-          <div className="w-20 h-20 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center mb-8">
-            <ShieldIcon />
+    <div className="min-h-screen relative bg-slate-50 dark:bg-slate-950 flex items-center justify-center">
+      {/* Background / Branding (decorativo) */}
+      <div className="hidden lg:block absolute inset-0">
+        <div className="absolute inset-0 bg-gradient-to-br from-emerald-600 via-teal-600 to-cyan-600 dark:from-emerald-500 dark:via-teal-500 dark:to-cyan-500" />
+        <div className="absolute inset-0 bg-black/30" />
+
+        {/* Decorative blur shapes */}
+        <div className="absolute -top-24 -left-24 w-96 h-96 bg-white/10 rounded-full blur-3xl" />
+        <div className="absolute bottom-0 right-0 w-80 h-80 bg-black/20 rounded-full blur-3xl" />
+
+        {/* Branding content */}
+        <div className="relative z-10 h-full flex flex-col justify-center px-24 text-white max-w-xl">
+          <div className="flex items-center gap-4 mb-6">
+            <div className="w-12 h-12 bg-white/15 backdrop-blur-md rounded-xl flex items-center justify-center">
+              <ShieldIcon />
+            </div>
+            <span className="uppercase tracking-widest text-sm text-white/70">
+              Seguridad & Confianza
+            </span>
           </div>
-          <h1 className="text-4xl font-bold mb-4 text-center">Acceso Seguro</h1>
-          <p className="text-xl text-center text-white/90 max-w-md">
-            Su plataforma de confianza para una autenticación segura y una experiencia de usuario fluida.
+
+          <h1 className="text-4xl font-semibold leading-tight mb-6">
+            Acceso seguro <br />a su plataforma
+          </h1>
+
+          <p className="text-lg text-white/80 leading-relaxed">
+            Protegemos su información con estándares modernos de autenticación
+            para ofrecerle una experiencia simple, rápida y confiable.
           </p>
         </div>
       </div>
 
-      {/* Right side - Login Form */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-8">
-        <div className="w-full max-w-md space-y-8">
-          {/* Header */}
-          <div className="text-center">
-            <div className="w-12 h-12 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-xl flex items-center justify-center mx-auto mb-6">
-              <ShieldIcon />
-            </div>
-            <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
-              Inicio de Sesion
-            </h2>
-            <p className="mt-2 text-gray-600 dark:text-gray-400">
-              Acceda a su cuenta segura
-            </p>
+      {/* Login Form (FOCO PRINCIPAL) */}
+      <div className="relative z-20 w-full max-w-md bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl rounded-2xl shadow-xl p-8 mx-4 animate-login-in">
+        {/* Header */}
+        <div className="text-center mb-8">
+          <div className="w-12 h-12 bg-gradient-to-r from-emerald-600 to-teal-600 rounded-xl flex items-center justify-center mx-auto mb-6 shadow-md">
+            <ShieldIcon />
           </div>
-
-          {/* OAuth buttons */}
-          <div className="space-y-3">
-            <button
-              type="button"
-              onClick={() => signIn("google")}
-              className="w-full flex items-center justify-center gap-3 border border-gray-300 dark:border-gray-700 rounded-lg py-3 font-medium hover:bg-gray-50 dark:hover:bg-gray-900"
-            >
-              <GoogleIcon />
-              Iniciar sesion con Google
-            </button>
-
-            <button
-              type="button"
-              onClick={() => signIn("twitter")}
-              className="w-full flex items-center justify-center gap-3 border border-gray-300 dark:border-gray-700 rounded-lg py-3 font-medium hover:bg-gray-50 dark:hover:bg-gray-900"
-            >
-              <XIcon />
-              Iniciar sesion con Twitter
-            </button>
-          </div>
-
-          {/* Divider */}
-          <div className="flex items-center gap-4">
-            <div className="flex-1 h-px bg-gray-300 dark:bg-gray-700" />
-            <span className="text-sm text-gray-500">O inicia sesión con correo electrónico</span>
-            <div className="flex-1 h-px bg-gray-300 dark:bg-gray-700" />
-          </div>
-
-          {/* FORM */}
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-            {/* Email */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Correo Electronico
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
-                  <AtSignIcon />
-                </div>
-                <input
-                  type="email"
-                  placeholder="you@example.com"
-                  {...register("email", {
-                    required: "El email es obligatorio",
-                  })}
-                  className="block w-full pl-10 pr-3 py-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-black focus:ring-2 focus:ring-indigo-500"
-                />
-              </div>
-              {errors.email && (
-                <p className="text-sm text-red-500 mt-1">
-                  {errors.email.message}
-                </p>
-              )}
-            </div>
-
-            {/* Password */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Contraseña
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
-                  <LockIcon />
-                </div>
-                <input
-                  type={showPassword ? "text" : "password"}
-                  placeholder="Enter your password"
-                  {...register("password", {
-                    required: "La contraseña es obligatoria",
-                  })}
-                  className="block w-full pl-10 pr-12 py-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-black focus:ring-2 focus:ring-indigo-500"
-                />
-                <button
-                  type="button"
-                  onClick={togglePasswordVisibility}
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400"
-                >
-                  {showPassword ? <EyeOffIcon /> : <EyeIcon />}
-                </button>
-              </div>
-              {errors.password && (
-                <p className="text-sm text-red-500 mt-1">
-                  {errors.password.message}
-                </p>
-              )}
-            </div>
-
-            {/* Keep signed + reset */}
-            <div className="flex items-center justify-between text-sm">
-              <label className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
-                <input type="checkbox" className="rounded border-gray-300" />
-                Mantenerme conectado
-              </label>
-
-              <a
-                href="/auth/reset-password"
-                className="text-indigo-600 hover:underline"
-              >
-                Restablecer contraseña
-              </a>
-            </div>
-
-            {/* Auth error */}
-            {authError && (
-              <p className="text-sm text-red-600 text-center">{authError}</p>
-            )}
-
-            {/* Submit */}
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold py-3 rounded-lg shadow-lg"
-            >
-              {isSubmitting ? "Iniciando sesión..." : "Inicia sesión en tu cuenta"}
-            </button>
-          </form>
-
-          {/* Create account */}
-          <p className="text-center text-sm text-gray-600 dark:text-gray-400">
-            ¿Eres nuevo en nuestra plataforma?{" "}
-            <a
-              href="/auth/register"
-              className="text-indigo-600 font-medium hover:underline"
-            >
-              Crear Cuenta
-            </a>
+          <h2 className="text-3xl font-bold text-slate-900 dark:text-white">
+            Inicio de Sesión
+          </h2>
+          <p className="mt-2 text-slate-600 dark:text-slate-400">
+            Acceda a su cuenta segura
           </p>
         </div>
+
+        {/* OAuth buttons */}
+        <div className="space-y-3 mb-6">
+          <button
+            type="button"
+            onClick={() => signIn("google")}
+            className="w-full flex items-center justify-center gap-3 border border-slate-300 dark:border-slate-700 rounded-lg py-3 font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+          >
+            <GoogleIcon />
+            Iniciar sesión con Google
+          </button>
+
+          <button
+            type="button"
+            onClick={() => signIn("twitter")}
+            className="w-full flex items-center justify-center gap-3 border border-slate-300 dark:border-slate-700 rounded-lg py-3 font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+          >
+            <XIcon />
+            Iniciar sesión con Twitter
+          </button>
+        </div>
+
+        {/* Divider */}
+        <div className="flex items-center gap-4 mb-6">
+          <div className="flex-1 h-px bg-slate-300 dark:bg-slate-700" />
+          <span className="text-sm text-slate-500">
+            O inicia sesión con correo electrónico
+          </span>
+          <div className="flex-1 h-px bg-slate-300 dark:bg-slate-700" />
+        </div>
+
+        {/* FORM */}
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+          {/* Email */}
+          <div>
+            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+              Correo Electrónico
+            </label>
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                <AtSignIcon />
+              </div>
+              <input
+                type="email"
+                placeholder="you@example.com"
+                {...register("email", {
+                  required: "El email es obligatorio",
+                })}
+                className="block w-full pl-10 pr-3 py-3 border border-slate-300 dark:border-slate-700 rounded-lg bg-white dark:bg-black focus:ring-2 focus:ring-emerald-500"
+              />
+            </div>
+            {errors.email && (
+              <p className="text-sm text-red-500 mt-1">
+                {errors.email.message}
+              </p>
+            )}
+          </div>
+
+          {/* Password */}
+          <div>
+            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+              Contraseña
+            </label>
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                <LockIcon />
+              </div>
+              <input
+                type={showPassword ? "text" : "password"}
+                placeholder="Enter your password"
+                {...register("password", {
+                  required: "La contraseña es obligatoria",
+                })}
+                className="block w-full pl-10 pr-12 py-3 border border-slate-300 dark:border-slate-700 rounded-lg bg-white dark:bg-black focus:ring-2 focus:ring-emerald-500"
+              />
+              <button
+                type="button"
+                onClick={togglePasswordVisibility}
+                className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600"
+              >
+                {showPassword ? <EyeOffIcon /> : <EyeIcon />}
+              </button>
+            </div>
+            {errors.password && (
+              <p className="text-sm text-red-500 mt-1">
+                {errors.password.message}
+              </p>
+            )}
+          </div>
+
+          {/* Keep signed + reset */}
+          <div className="flex items-center justify-between text-sm">
+            <label className="flex items-center gap-2 text-slate-600 dark:text-slate-400">
+              <input type="checkbox" className="rounded border-slate-300" />
+              Mantenerme conectado
+            </label>
+
+            <a
+              href="/auth/reset-password"
+              className="text-emerald-600 hover:underline"
+            >
+              Restablecer contraseña
+            </a>
+          </div>
+
+          {authError && (
+            <p className="text-sm text-red-600 text-center">{authError}</p>
+          )}
+
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-semibold py-3 rounded-lg shadow-lg hover:opacity-90 transition"
+          >
+            {isSubmitting
+              ? "Iniciando sesión..."
+              : "Inicia sesión en tu cuenta"}
+          </button>
+        </form>
+
+        <p className="text-center text-sm text-slate-600 dark:text-slate-400 mt-6">
+          ¿Eres nuevo en nuestra plataforma?{" "}
+          <a
+            href="/auth/register"
+            className="text-emerald-600 font-medium hover:underline"
+          >
+            Crear Cuenta
+          </a>
+        </p>
       </div>
     </div>
   );
